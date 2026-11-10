@@ -1,0 +1,990 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Observação na Cautela</title>
+<style>
+  :root {
+    --navy: #12284a; --navy2: #1d3d6b; --ink: #1b2430; --muted: #5d6b7c; --line: #dde3ea;
+    --bg: #f4f6f9; --card: #ffffff; --amber: #f2a900; --amber-soft: #fff4d1; --green: #1f8a5b; --green-soft: #e3f4ec;
+    --red: #b3261e; --red-soft: #fbe9e7; --blue-soft: #e8f0fb;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: "Segoe UI", Roboto, Arial, sans-serif; font-size: 15px; line-height: 1.55; }
+  a { color: var(--navy2); }
+  code, pre { font-family: Consolas, "Courier New", monospace; }
+
+  /* Navegação */
+  nav { position: sticky; top: 0; z-index: 50; background: rgba(18,40,74,.97); backdrop-filter: blur(6px); }
+  nav .in { scrollbar-width: none; max-width: 1280px; margin: 0 auto; display: flex; align-items: center; gap: 4px; padding: 0 16px; overflow-x: auto; }
+  nav .brand { color: #fff; font-weight: 700; padding: 12px 14px 12px 0; white-space: nowrap; border-right: 1px solid rgba(255,255,255,.18); margin-right: 6px; }
+  nav .brand span { color: var(--amber); }
+  nav a { color: #cfd9e8; text-decoration: none; font-size: 13.5px; padding: 13px 10px; white-space: nowrap; border-bottom: 3px solid transparent; }
+  nav a:hover, nav a.on { color: #fff; border-bottom-color: var(--amber); }
+
+  /* Capa */
+  header.hero { background: radial-gradient(1200px 400px at 85% -10%, #2b5797 0%, transparent 60%), linear-gradient(135deg, #0e2140, #17345e 60%, #12284a); color: #fff; }
+  .hero .in { max-width: 1280px; margin: 0 auto; padding: 56px 16px 48px; display: grid; grid-template-columns: 1.25fr 1fr; gap: 40px; align-items: center; }
+  .eyebrow { display: inline-block; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--amber); font-weight: 700; margin-bottom: 12px; }
+  .hero h1 { font-size: 40px; line-height: 1.12; margin: 0 0 14px; font-weight: 800; letter-spacing: -.01em; }
+  .hero p.lead { font-size: 17px; color: #d7e1ef; margin: 0 0 22px; max-width: 640px; }
+  .hero .cta { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; border: 0; border-radius: 8px; padding: 10px 16px; font: 600 14px "Segoe UI", Arial, sans-serif; cursor: pointer; text-decoration: none; }
+  .btn.pri { background: var(--amber); color: #1a1a1a; }
+  .btn.sec { background: rgba(255,255,255,.12); color: #fff; border: 1px solid rgba(255,255,255,.25); }
+  .btn.dark { background: var(--navy); color: #fff; }
+  .btn.ghost { background: #fff; color: var(--navy); border: 1px solid var(--line); }
+  .kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .kpi { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.16); border-radius: 12px; padding: 16px; }
+  .kpi b { display: block; font-size: 13px; color: var(--amber); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 4px; }
+  .kpi span { font-size: 14px; color: #e9eef6; }
+
+  /* Seções */
+  section { max-width: 1280px; margin: 0 auto; padding: 56px 16px 8px; }
+  .sec-h { display: flex; align-items: baseline; gap: 14px; margin-bottom: 8px; }
+  .sec-h .n { font-size: 13px; font-weight: 800; color: #fff; background: var(--navy); border-radius: 6px; padding: 2px 9px; }
+  .sec-h h2 { font-size: 27px; margin: 0; color: var(--navy); letter-spacing: -.01em; }
+  .sec-sub { color: var(--muted); margin: 0 0 24px; max-width: 900px; }
+  .card { min-width: 0; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 22px; box-shadow: 0 1px 2px rgba(16,24,40,.04); }
+  .grid2 { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 20px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .card h3 { margin: 0 0 8px; font-size: 18px; color: var(--navy); }
+  .pill { display: inline-block; font-size: 11.5px; font-weight: 700; padding: 2px 9px; border-radius: 99px; letter-spacing: .03em; }
+  .pill.red { background: var(--red-soft); color: var(--red); }
+  .pill.green { background: var(--green-soft); color: var(--green); }
+  .pill.amber { background: var(--amber-soft); color: #8a5d00; }
+  .pill.blue { background: var(--blue-soft); color: var(--navy2); }
+  ul.clean { margin: 8px 0 0; padding-left: 18px; }
+  ul.clean li { margin: 4px 0; }
+  .muted { color: var(--muted); }
+  .small { font-size: 13px; }
+
+  /* Fluxo */
+  .flow { display: flex; align-items: stretch; gap: 0; flex-wrap: wrap; }
+  .step { flex: 1; min-width: 170px; background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 16px; position: relative; margin-right: 26px; }
+  .step:last-child { margin-right: 0; }
+  .step:not(:last-child)::after { content: "➜"; position: absolute; right: -22px; top: 50%; transform: translateY(-50%); color: var(--amber); font-size: 18px; }
+  .step .ic { width: 34px; height: 34px; border-radius: 9px; background: var(--blue-soft); color: var(--navy2); display: grid; place-items: center; font-weight: 800; margin-bottom: 8px; }
+  .step b { display: block; color: var(--navy); margin-bottom: 2px; }
+  .step span { font-size: 13.5px; color: var(--muted); }
+  .step.hl { border-color: var(--amber); box-shadow: 0 0 0 3px var(--amber-soft); }
+  .chip { border: 1px solid var(--line); background: #fff; color: var(--navy); border-radius: 99px; padding: 6px 12px; font: 600 13px "Segoe UI", Arial, sans-serif; cursor: pointer; }
+  .chip:hover { border-color: var(--amber); background: var(--amber-soft); }
+  .casos-list { display: grid; gap: 18px; }
+  .card.caso { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.75fr); gap: 24px; align-items: center; }
+  @media (max-width: 900px) { .card.caso { grid-template-columns: 1fr; } }
+
+  /* Tabelas */
+  table.t { width: 100%; border-collapse: collapse; font-size: 14px; }
+  table.t th { text-align: left; background: #f0f3f7; color: var(--navy); font-weight: 700; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+  table.t td { padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  table.t tr:last-child td { border-bottom: 0; }
+  .tw { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+
+  /* Demo */
+  .demo-bar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; }
+  .seg { display: inline-flex; background: #e6ebf2; border-radius: 10px; padding: 4px; }
+  .seg button { border: 0; background: transparent; padding: 8px 14px; border-radius: 7px; font: 600 13.5px "Segoe UI", Arial, sans-serif; color: var(--muted); cursor: pointer; }
+  .seg button.on { background: #fff; color: var(--navy); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+  .demo { display: grid; grid-template-columns: minmax(0, 560fr) minmax(0, 720fr); gap: 24px; align-items: start; }
+  #demo { max-width: 1440px; }
+  .demo .fit[data-w="560"] { max-width: 560px; margin: 0 auto; }
+  .demo .col { min-width: 0; }
+  .demo .col h4 { margin: 0 0 10px; font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+  .live { display: inline-flex; align-items: center; gap: 6px; color: var(--green); font-weight: 700; }
+  .live::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 1.4s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: .3 } }
+  .fit { position: relative; overflow: hidden; }
+  .fit > .scaler { transform-origin: 0 0; }
+  .paper-wrap { background: #cfd5dd; border-radius: 12px; padding: 14px; }
+  .hint { margin-top: 10px; font-size: 13px; color: var(--muted); }
+
+  /* ===== Tela SIGET (Saída de carretas) ===== */
+  .win { position: relative; width: 560px; height: calc(676px + var(--off, 62px)); background: #f0f0f0; border: 1px solid #8a8a8a;
+         border-radius: 8px; box-shadow: 0 10px 28px rgba(0,0,0,.25); overflow: hidden; font-family: Tahoma, "Segoe UI", Arial, sans-serif; font-size: 12px; color: #000; }
+  .win .title { position: absolute; left: 0; top: 0; width: 100%; height: 30px; background: #fff; display: flex; align-items: center; padding: 0 10px; font-family: "Segoe UI", Tahoma, sans-serif; font-size: 12.5px; }
+  .win .title svg { margin-right: 8px; }
+  .win .title .x { margin-left: auto; font-size: 16px; color: #333; }
+  .win .lb { position: absolute; font-size: 12px; white-space: nowrap; transform: translateY(-6px); }
+  .win .in { position: absolute; height: 20px; background: #fff; border: 1px solid #7a7a7a; padding: 1px 4px; font: 12px Tahoma, Arial, sans-serif; outline: none; }
+  .win .in:focus { border-color: #0063b1; box-shadow: inset 0 0 0 1px #0063b1; }
+  .win .mask { font-family: "Courier New", monospace; font-size: 12.5px; letter-spacing: -0.6px; padding: 1px 3px; text-transform: uppercase; }
+  .win .mask::placeholder { color: #000; opacity: 1; }
+  .win .ro { color: #8a8a8a; background: #fff; }
+  .win select.in { padding: 0 2px; }
+  .win .dis { position: absolute; height: 18px; background: #b9c7d9; font-size: 11.5px; padding: 1px 4px; white-space: nowrap; overflow: hidden; color: #222; }
+  .win .hl { position: absolute; left: 0; width: 560px; height: 0; border-top: 1px solid #a0a0a0; border-bottom: 1px solid #fff; }
+  .win .vl { position: absolute; width: 0; border-left: 1px solid #a0a0a0; border-right: 1px solid #fff; }
+  .win .grid { position: absolute; left: 10px; top: 59px; width: 531px; height: 110px; background: #fff; border: 1px solid #828790; overflow: hidden; }
+  .win .grid table { border-collapse: collapse; font-family: "Segoe UI", Tahoma, sans-serif; font-size: 11.5px; table-layout: fixed; width: 514px; }
+  .win .grid th { font-weight: normal; text-align: left; padding: 1px 3px; border: 1px solid #d0d0d0; height: 19px; }
+  .win .grid td { padding: 1px 3px; height: 18px; border-right: 1px solid #e3e3e3; white-space: nowrap; overflow: hidden; cursor: pointer; }
+  .win .grid tr.sel td { background: #a7cdf0; }
+  .win .grid tr td:first-child { background: #fff !important; font-size: 9px; }
+  .win .red { position: absolute; left: 10px; top: 326px; color: #8b0000; font-weight: bold; font-size: 14.5px; }
+  .win .info { position: absolute; left: 7px; top: 349px; width: 552px; height: 83px; border: 1px solid #a0a0a0; border-right: 0; padding: 3px; color: #0000c8; font-weight: bold; font-size: 12.5px; line-height: 12.3px; }
+  .win .low { top: calc(var(--y) + var(--off, 62px)) !important; }
+  .win .obsbox { position: absolute; left: 11px; top: 456px; width: 541px; height: 56px; border: 1px solid #7a7a7a; background: #fffbe8;
+                 font: 12px/16px Tahoma, Arial, sans-serif; padding: 3px 4px; resize: none; overflow: hidden; outline: none; }
+  .win .obsbox:focus { border-color: #0063b1; box-shadow: inset 0 0 0 1px #0063b1; }
+  .win .obs-lb { position: absolute; left: 12px; top: 434px; font-size: 12px; }
+  .win .obs-lb b { color: #b06b00; }
+  .win .foto { position: absolute; left: 439px; width: 113px; height: 150px; border: 1px solid #a0a0a0; border-right-color: #fff; border-bottom-color: #fff;
+               display: grid; place-items: center; color: #8b97a6; font-size: 11px; }
+  .win .wbtn { position: absolute; width: 90px; height: 29px; background: #fdfdfd; border: 1px solid #adadad; border-radius: 3px; display: flex; align-items: center;
+               justify-content: center; gap: 7px; font: bold 13px Tahoma, Arial, sans-serif; cursor: pointer; }
+  .win .wbtn:hover { background: #e5f1fb; border-color: #0078d7; }
+  .win.f1 .obs-only { display: none; }
+
+  /* InputBox (FastReport) */
+  .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,.35); display: none; place-items: center; z-index: 100; }
+  .modal-bg.show { display: grid; }
+  .ibox { width: 420px; max-width: calc(100vw - 32px); background: #f0f0f0; border: 1px solid #888; border-radius: 8px; box-shadow: 0 12px 40px rgba(0,0,0,.35); font: 12px "Segoe UI", Tahoma, sans-serif; overflow: hidden; }
+  .ibox .tt { background: #fff; padding: 8px 12px; display: flex; justify-content: space-between; font-size: 12.5px; }
+  .ibox .bd { padding: 14px 14px 10px; }
+  .ibox input { width: 100%; height: 24px; border: 1px solid #7a7a7a; padding: 2px 5px; font: 12px "Segoe UI", Tahoma, sans-serif; margin-top: 8px; outline-color: #0063b1; }
+  .ibox .ft { display: flex; justify-content: flex-end; gap: 8px; padding: 0 14px 14px; }
+  .ibox .ft button { min-width: 80px; height: 26px; border: 1px solid #adadad; background: #fdfdfd; border-radius: 3px; font: 12px "Segoe UI", Tahoma, sans-serif; cursor: pointer; }
+  .ibox .ft button.def { border-color: #0078d7; box-shadow: inset 0 0 0 1px #0078d7; }
+
+  /* ===== Cautela (render FR3) ===== */
+  .sheet { position: relative; width: 794px; background: #fff; overflow: hidden; }
+  .sheet .el { position: absolute; overflow: hidden; display: flex; white-space: pre-wrap; line-height: 1.12; padding: 0 2px; }
+  .sheet .el.obsfill { background: rgba(242,169,0,.18); }
+  .sheet .stamp { position: absolute; border: 2px dashed rgba(179,38,30,.6); color: rgba(179,38,30,.75); border-radius: 50%; display: grid; place-items: center; font: 700 10.5px Arial, sans-serif; text-align: center; transform: rotate(-8deg); }
+  .sheet .hand { position: absolute; font-family: "Segoe Print", "Comic Sans MS", cursive; color: #1d3f9a; font-size: 15px; transform: rotate(-1.5deg); white-space: nowrap; }
+  .sheet.design { background-color: #fff; background-image: linear-gradient(#ececec 1px, transparent 1px), linear-gradient(90deg, #ececec 1px, transparent 1px); background-size: 18.9px 18.9px; }
+  .sheet .bandhead { position: absolute; height: 16px; background: #e8a33d; border: 1px solid #c07a17; font: 11px Tahoma, Arial, sans-serif; display: flex; align-items: center; padding: 0 4px; }
+  .sheet .bandhead .ds { margin-left: auto; }
+  .sheet .cm { position: absolute; width: 5px; height: 5px; border: 0 solid #333; pointer-events: none; }
+  .sheet .chg { position: absolute; outline: 2px solid var(--amber); outline-offset: 1px; pointer-events: none; }
+  .sheet .chg-tag { position: absolute; background: var(--amber); color: #1a1a1a; font: 700 10px Arial, sans-serif; padding: 1px 5px; border-radius: 3px; white-space: nowrap; }
+
+  .tabs { display: flex; gap: 2px; font: 12px Tahoma, Arial, sans-serif; }
+  .tabs button { background: #e8e8e8; border: 1px solid #a5a5a5; border-bottom: 0; padding: 4px 12px; cursor: pointer; font: inherit; border-radius: 3px 3px 0 0; }
+  .tabs button.on { background: #fff; font-weight: bold; }
+  #edPage .fit { max-width: 794px; margin: 0 auto; }
+  .ed-frame { background: #a9a9a9; border: 1px solid #8f8f8f; padding: 14px; border-radius: 0 6px 6px 6px; }
+  pre.code { margin: 0; background: #fff; border: 1px solid #c9c9c9; padding: 14px 16px; font-size: 13px; line-height: 1.45; overflow-x: auto; color: #000; }
+  pre.code .kw { color: #00008b; font-weight: bold; }
+  pre.code .str { color: #a31515; }
+  pre.code .cm2 { color: #008000; font-style: italic; }
+  pre.code .add { display: block; background: #e6f6e6; border-left: 3px solid var(--green); margin: 0 -16px; padding: 0 13px; }
+  pre.code .del { display: block; background: #fdecea; border-left: 3px solid var(--red); margin: 0 -16px; padding: 0 13px; text-decoration: line-through; color: #8b1a14; }
+
+  .compare { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 20px; }
+  .compare h4 { margin: 0 0 10px; display: flex; align-items: center; gap: 8px; color: var(--navy); }
+
+  .callout { border-left: 4px solid var(--amber); background: var(--amber-soft); padding: 12px 16px; border-radius: 0 10px 10px 0; margin: 16px 0; }
+  .callout.green { border-left-color: var(--green); background: var(--green-soft); }
+  .callout.blue { border-left-color: var(--navy2); background: var(--blue-soft); }
+  .checklist li { list-style: none; position: relative; padding-left: 26px; margin: 7px 0; }
+  .checklist li::before { content: "✓"; position: absolute; left: 0; top: 0; width: 18px; height: 18px; border-radius: 5px; background: var(--green-soft); color: var(--green); font-weight: 800; font-size: 12px; display: grid; place-items: center; }
+  ol.steps { counter-reset: s; list-style: none; padding: 0; margin: 0; }
+  ol.steps li { counter-increment: s; position: relative; padding: 0 0 14px 44px; }
+  ol.steps li::before { content: counter(s); position: absolute; left: 0; top: 0; width: 30px; height: 30px; border-radius: 50%; background: var(--navy); color: #fff; font-weight: 700; display: grid; place-items: center; }
+  footer { max-width: 1280px; margin: 56px auto 0; padding: 24px 16px 40px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); }
+
+  #printArea { display: none; }
+  @page { size: A4 portrait; margin: 0; }
+  @media print {
+    body { background: #fff; }
+    body > *:not(#printArea) { display: none !important; }
+    #printArea { display: block; }
+    #printArea .sheet { page-break-after: always; break-after: page; }
+    #printArea .sheet .el.obsfill { background: transparent; }
+  }
+
+  @media (max-width: 760px) {
+    .demo { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 900px) {
+    .hero .in, .grid2, .grid3, .compare { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 30px; }
+    .step { margin-right: 0; margin-bottom: 12px; min-width: 100%; }
+    .step:not(:last-child)::after { content: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav><div class="in">
+  <div class="brand">SIGET · <span>Obs. na Cautela</span></div>
+  <a href="#problema">Problema</a>
+  <a href="#casos">Casos do dia a dia</a>
+  <a href="#proposta">Proposta</a>
+  <a href="#demo">Demonstração ao vivo</a>
+  <a href="#cautela">Cautela antes × depois</a>
+  <a href="#editor">Modelo da cautela (T.I.)</a>
+  <a href="#tecnico">Especificação técnica</a>
+  <a href="#implantacao">Implantação</a>
+</div></nav>
+
+<header class="hero"><div class="in">
+  <div>
+    <div class="eyebrow">Proposta de melhoria · SIGET 24.3.8.0</div>
+    <h1>Campo de observação na Cautela de Saída de Veículo/Container</h1>
+    <p class="lead">Hoje a cautela não tem onde registrar informações adicionais (saída de bitrem por partes, lacres de cada carreta, número de container...). A equipe escreve à mão, carimba, circula e envia por e-mail à GRC, enquanto o motorista espera. Propomos reaproveitar a linha <b>OBS</b>, que hoje mostra o <b>Ato Declaratório</b> (não usado), para imprimir uma observação digitada e <b>agilizar a liberação na portaria</b>.</p>
+    <div class="cta">
+      <a class="btn pri" href="#demo">▶ Ver demonstração ao vivo</a>
+      <a class="btn sec" href="#tecnico">Especificação para o T.I.</a>
+    </div>
+  </div>
+  <div class="kpis">
+    <div class="kpi"><b>Problema</b><span>Observações escritas à mão, fora do quadro da cautela e sem padrão.</span></div>
+    <div class="kpi"><b>Solução</b><span>Linha OBS da cautela passa a imprimir o texto digitado (até 3 linhas).</span></div>
+    <div class="kpi"><b>Fase 1 (pronta)</b><span>Só o modelo de impressão da cautela muda. O próprio T.I. aplica, sem o fornecedor.</span></div>
+    <div class="kpi"><b>Fase 2 (definitiva)</b><span>Campo "Obs. Cautela" na tela de Saída do SIGET, com a observação gravada no sistema.</span></div>
+  </div>
+</div></header>
+
+<!-- 1. PROBLEMA -->
+<section id="problema">
+  <div class="sec-h"><span class="n">01</span><h2>O problema hoje</h2></div>
+  <p class="sec-sub">Ao confirmar a saída da carreta, o SIGET imprime a cautela em 3 vias. A cautela já tem uma linha <b>OBS</b>, mas ela é preenchida sozinha pelo sistema com o Ato Declaratório, que não usamos mais. Por isso, quando precisamos registrar alguma coisa, escrevemos à mão.</p>
+  <div class="grid2">
+    <div class="card">
+      <h3>Como a cautela sai hoje <span class="pill red">escrito à mão</span></h3>
+      <div class="paper-wrap"><div class="fit" data-w="794"><div class="scaler" id="cautProblema"></div></div></div>
+      <p class="hint">Cópia fiel da cautela que o SIGET imprime hoje, com dados de exemplo.</p>
+    </div>
+    <div class="card">
+      <h3>Impactos</h3>
+      <ul class="clean">
+        <li><b>Informação fora do documento:</b> o texto fica embaixo do quadro, sem padrão e às vezes ilegível.</li>
+        <li><b>Diferença entre vias:</b> é preciso escrever em cada uma das 3 vias, e o texto pode ficar diferente entre elas.</li>
+        <li><b>Sem registro no sistema:</b> a observação não fica no SIGET e se perde na reimpressão.</li>
+        <li><b>Espaço desperdiçado:</b> a linha OBS existe, mas só mostra o Ato Declaratório, que está em desuso.</li>
+        <li><b>Carimbo por cima do texto:</b> não há área reservada para o carimbo da balança.</li>
+      </ul>
+      <div class="callout blue small"><b>Ponto de partida:</b> o campo e o espaço já existem no layout. A proposta muda a <b>função</b> da linha OBS, não o documento.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. CASOS -->
+<section id="casos">
+  <div class="sec-h"><span class="n">02</span><h2>Casos do dia a dia</h2></div>
+  <p class="sec-sub">A observação na cautela não é exceção: faz parte da rotina. Estes são os casos mais comuns, e o caminho que cada cautela percorre hoje até o motorista ser liberado na portaria.</p>
+
+  <div class="card" style="margin-bottom:20px">
+    <h3>Como é hoje <span class="pill red">processo manual</span></h3>
+    <div class="flow" style="margin-top:12px">
+      <div class="step"><div class="ic" style="background:var(--red-soft);color:var(--red)">1</div><b>Escreve à mão</b><span>Em cada via: lacres de cada parte, "saída por partes", nº do container...</span></div>
+      <div class="step"><div class="ic" style="background:var(--red-soft);color:var(--red)">2</div><b>Carimba e circula</b><span>Carimbo sobre a OBS e círculo de caneta para validar.</span></div>
+      <div class="step"><div class="ic" style="background:var(--red-soft);color:var(--red)">3</div><b>Digitaliza</b><span>Foto/scan de cada cautela.</span></div>
+      <div class="step"><div class="ic" style="background:var(--red-soft);color:var(--red)">4</div><b>E-mail para a GRC</b><span>Uma cautela anexada por saída. Depende da demanda do dia.</span></div>
+      <div class="step"><div class="ic" style="background:var(--red-soft);color:var(--red)">5</div><b>Portaria aceita</b><span>Só depois do retorno da GRC.</span></div>
+    </div>
+    <div class="callout" style="margin-bottom:0"><b>⏱ Enquanto isso, o motorista espera.</b> Cada passo manual soma tempo, e em dias de muita demanda o envio à GRC atrasa. O objetivo é reduzir essa espera para o cliente e o motorista.</div>
+  </div>
+
+  <div class="casos-list">
+    <div class="card caso">
+      <div>
+        <span class="pill amber">BITREM · SAÍDA POR PARTES</span>
+        <h3 style="margin-top:8px">Bitrem</h3>
+        <p class="small"><b>Hoje:</b> cada carreta do bitrem tem a sua cautela, e em cada uma escrevemos à mão, em todas as vias, que a saída é por partes e os lacres. Depois carimbamos, circulamos e enviamos por e-mail à GRC.</p>
+        <p class="small"><b>Com a proposta:</b> digitamos <b>tudo de uma vez</b> (saída por partes e os lacres de cada carreta), e o mesmo texto sai nas <b>2 cautelas</b> e nas 3 vias de cada uma.</p>
+      </div>
+      <div style="display:grid;gap:10px">
+        <div class="small muted" style="font-weight:600">Cautela da 1ª carreta</div>
+        <div class="paper-wrap"><div class="fit" data-w="794"><div class="scaler" id="caso1"></div></div></div>
+        <div class="small muted" style="font-weight:600">Cautela da 2ª carreta (mesma OBS)</div>
+        <div class="paper-wrap"><div class="fit" data-w="794"><div class="scaler" id="caso2"></div></div></div>
+      </div>
+    </div>
+    <div class="card caso">
+      <div>
+        <span class="pill blue">CARRETA PRANCHA + CONTAINER</span>
+        <h3 style="margin-top:8px">Ex.: Ceslog</h3>
+        <p class="small"><b>Hoje:</b> de Belém vem cadastrada só a carreta prancha, sem o container que está em cima dela. Escrevemos o número do container à mão e enviamos por e-mail.</p>
+        <p class="small"><b>Com a proposta:</b> o número do container vai digitado na OBS, sem risco de erro de leitura.</p>
+      </div>
+      <div class="paper-wrap"><div class="fit" data-w="794"><div class="scaler" id="caso3"></div></div></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h3>Como fica com a proposta <span class="pill green">digitado</span></h3>
+    <div class="flow" style="margin-top:12px">
+      <div class="step hl"><div class="ic" style="background:var(--green-soft);color:var(--green)">1</div><b>Digita a OBS</b><span>Uma vez, ou escolhe um modelo pronto (bitrem, container...).</span></div>
+      <div class="step"><div class="ic" style="background:var(--green-soft);color:var(--green)">2</div><b>Cautela sai pronta</b><span>Texto legível, igual nas 3 vias, dentro do quadro OBS.</span></div>
+      <div class="step"><div class="ic" style="background:var(--green-soft);color:var(--green)">3</div><b>Carimba</b><span>Área reservada, sem cobrir o texto. Não precisa circular.</span></div>
+      <div class="step hl"><div class="ic" style="background:var(--green-soft);color:var(--green)">4</div><b>GRC / portaria</b><span>Hoje: e-mail com a cautela já legível.<br>Fase 3: PDF enviado direto pelo SIGET.</span></div>
+    </div>
+    <ul class="clean small" style="margin-top:14px">
+      <li><b>Menos passos manuais</b>: some escrever em cada via e circular a caneta.</li>
+      <li><b>Sem erro de leitura</b>: lacres e números de container digitados, não manuscritos.</li>
+      <li><b>Padrão</b>: a mesma frase para o mesmo caso, fácil para a GRC e a portaria conferirem.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 3. PROPOSTA -->
+<section id="proposta">
+  <div class="sec-h"><span class="n">03</span><h2>A proposta</h2></div>
+  <p class="sec-sub">Duas fases: a primeira resolve o problema já, mudando só o modelo de impressão da cautela; a segunda é a solução definitiva, feita pelo fornecedor do SIGET.</p>
+
+  <div class="flow" style="margin-bottom:22px">
+    <div class="step"><div class="ic">1</div><b>Operador seleciona a carreta</b><span>Tela "Saída de carretas", como hoje.</span></div>
+    <div class="step hl"><div class="ic">2</div><b>Digita a observação</b><span>Fase 1: janela na impressão.<br>Fase 2: campo na própria tela.</span></div>
+    <div class="step"><div class="ic">3</div><b>Clica em Ok</b><span>O SIGET gera a cautela normalmente.</span></div>
+    <div class="step hl"><div class="ic">4</div><b>Cautela sai com a OBS</b><span>Mesmo texto nas 3 vias, com espaço para o carimbo.</span></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <span class="pill green">FASE 1 · PRONTA PARA TESTE</span>
+      <h3 style="margin-top:8px">Só o modelo de impressão da cautela muda</h3>
+      <ul class="clean">
+        <li>A linha <b>OBS</b> deixa de mostrar o Ato Declaratório e passa a mostrar o que o operador digitar.</li>
+        <li>Ao imprimir a cautela, abre uma janela <b>"Observação"</b>: digitamos uma vez e o texto sai igual nas 3 vias.</li>
+        <li>Espaço para até <b>3 linhas</b>, com a mesma letra do resto da cautela.</li>
+        <li>Quadro OBS um pouco maior, com <b>espaço livre para o carimbo</b>; as assinaturas descem.</li>
+        <li>O SIGET continua igual: nenhuma tela nem dado do sistema muda.</li>
+      </ul>
+      <p class="small muted">Limitação: a observação não fica gravada no SIGET; numa reimpressão, é preciso digitar de novo.</p>
+    </div>
+    <div class="card">
+      <span class="pill blue">FASE 2 · FORNECEDOR</span>
+      <h3 style="margin-top:8px">Campo na tela do SIGET + observação gravada</h3>
+      <ul class="clean">
+        <li>Novo campo <b>"Obs. Cautela"</b> (3 linhas) na tela <b>Saída de carretas</b>, digitado junto com lacre, pedágio etc.</li>
+        <li>A observação fica <b>gravada no SIGET</b> junto com a saída da carreta.</li>
+        <li>Sai sozinha na cautela, sem janela extra, e também na <b>reimpressão</b>.</li>
+        <li>Pode ser consultada depois no sistema.</li>
+      </ul>
+      <p class="small muted">A Fase 1 já deixa a cautela pronta; a Fase 2 só muda de onde vem o texto. Os detalhes técnicos estão na seção "Especificação técnica".</p>
+    </div>
+  </div>
+</section>
+
+<!-- 3. DEMO -->
+<section id="demo">
+  <div class="sec-h"><span class="n">04</span><h2>Demonstração ao vivo</h2></div>
+  <p class="sec-sub">À esquerda, a tela <b>Saída de carretas</b> do SIGET (réplica funcional). À direita, a <b>cautela final</b>, que se atualiza enquanto você preenche. Clique em outra carreta na grade, altere lacre, pedágio, cavalo... e digite a observação.</p>
+
+  <div class="demo-bar">
+    <div class="seg" id="segFase">
+      <button class="on" data-f="2">Fase 2 · campo na tela</button>
+      <button data-f="1">Fase 1 · janela na impressão</button>
+    </div>
+    <button class="btn ghost" id="btnExemplo">↺ Preencher exemplo</button>
+    <button class="btn ghost" id="btnLimpar">Limpar campos</button>
+    <button class="btn dark" id="btnPrint">🖨 Imprimir 3 vias</button>
+  </div>
+  <div class="demo-bar modelos">
+    <span class="small muted" style="font-weight:600">Modelos de OBS:</span>
+    <button class="chip" data-m="bitrem">Bitrem · saída por partes</button>
+    <button class="chip" data-m="prancha">Prancha + container (Ceslog)</button>
+    <button class="chip" data-m="avaria">Avaria</button>
+  </div>
+
+  <div class="demo">
+    <div class="col">
+      <h4>Tela do SIGET <span class="live">ao vivo</span></h4>
+      <div class="fit" data-w="560"><div class="scaler">
+      <div class="win" id="win">
+        <div class="title">
+          <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="1" width="11" height="7" fill="#2d6db5"/><path d="M11 3h4l3 3v2h-7z" fill="#1d4f8a"/><circle cx="4" cy="10" r="1.8" fill="#333"/><circle cx="14" cy="10" r="1.8" fill="#333"/></svg>
+          Saída de carretas <span class="x">✕</span>
+        </div>
+        <div class="lb" style="left:12px;top:36px"><u>V</u>eículo:</div>
+        <input class="in mask" id="f_veiculo" style="left:74px;top:33px;width:90px" maxlength="8">
+
+        <div class="grid"><table>
+          <colgroup><col style="width:13px"><col style="width:52px"><col style="width:114px"><col style="width:38px"><col style="width:58px"><col style="width:52px"><col style="width:62px"><col style="width:125px"></colgroup>
+          <thead><tr><th></th><th>Controle</th><th>Chegada</th><th>Tipo</th><th>Carreta</th><th>Cavalo</th><th>Frota</th><th>Chassis/Contain.</th></tr></thead>
+          <tbody id="gridBody"></tbody>
+        </table></div>
+
+        <div class="vl" style="left:254px;top:172px;height:82px"></div>
+        <div class="lb" style="left:13px;top:174px">Pedágio:</div>
+        <input class="in mask" id="f_pedagio" style="left:13px;top:189px;width:66px" placeholder="________" maxlength="8">
+        <div class="lb" style="left:101px;top:174px">Data:</div>
+        <input class="in mask ro" id="f_data" style="left:101px;top:189px;width:65px" readonly>
+        <div class="lb" style="left:189px;top:174px">Hora:</div>
+        <input class="in mask ro" id="f_hora" style="left:189px;top:189px;width:52px" readonly>
+        <div class="lb" style="left:262px;top:177px">Cavalo retirando:</div>
+        <input class="in mask" id="f_cavret" style="left:264px;top:193px;width:72px" placeholder="___-____" maxlength="8">
+        <div class="lb" style="left:356px;top:177px">Tipo Cavalo</div>
+        <select class="in" id="f_tipocav" style="left:356px;top:193px;width:102px">
+          <option value=""></option><option>Fiat</option><option>Ford</option><option>Mercedes</option><option>Scania</option><option>VolksWagen</option><option>Volvo</option><option>Iveco</option>
+        </select>
+        <div class="lb" style="left:470px;top:177px">Transbordo</div>
+        <input class="in mask" id="f_transb" style="left:472px;top:193px;width:72px" placeholder="___-____" maxlength="8">
+
+        <div class="hl" style="top:214px"></div>
+        <div class="lb" style="left:12px;top:223px">Lacre:</div>
+        <input class="in mask" id="f_lacre" style="left:13px;top:231px;width:82px" placeholder="__________" maxlength="10">
+        <div class="lb" style="left:123px;top:223px">Tipo Lacre:</div>
+        <select class="in" id="f_tipolacre" style="left:123px;top:231px;width:115px">
+          <option value=""></option><option>Arame</option><option>Cadeado</option><option>Ferro</option><option>Plastico</option><option>S/lacre</option>
+        </select>
+        <div class="lb" style="left:264px;top:223px">Cautela SEFAZ:</div>
+        <input class="in mask" id="f_sefaz" style="left:264px;top:231px;width:120px" placeholder="________/__-_" maxlength="13">
+
+        <div class="hl" style="top:254px"></div>
+        <div class="lb" style="left:14px;top:259px">Cod.Cliente</div>
+        <input class="in" id="f_codcli" style="left:13px;top:271px;width:70px">
+        <div class="lb" style="left:91px;top:259px">Cliente</div>
+        <input class="in" id="f_cliente" style="left:91px;top:271px;width:405px;border-color:#d6d6d6">
+        <div style="position:absolute;left:505px;top:258px;width:54px;height:38px;border:1px solid #d6d6d6;background:#f7f7f7"></div>
+        <div class="hl" style="top:298px"></div>
+
+        <div class="red" id="w_diarias"></div>
+        <div class="info" id="w_info"></div>
+
+        <!-- NOVO CAMPO (Fase 2) -->
+        <div class="obs-lb obs-only" style="top:440px"><b>★</b> Obs. Cautela <span style="color:#777">(sai na linha OBS da cautela · até 3 linhas)</span>:</div>
+        <textarea class="obsbox obs-only" id="f_obs" spellcheck="false" placeholder="Digite a observação..."></textarea>
+
+        <div class="lb low" style="--y:463px;left:11px">Condutor</div>
+        <input class="in low" id="f_codcond" style="--y:474px;left:11px;width:32px">
+        <div class="dis low" id="w_condutor" style="--y:475px;left:63px;width:371px"></div>
+        <div class="foto low" style="--y:472px">foto</div>
+        <div class="lb low" style="--y:503px;left:11px">Endereço</div>
+        <div class="dis low" style="--y:514px;left:11px;width:321px">RUA EXEMPLO, 100</div>
+        <div class="lb low" style="--y:503px;left:342px">CEP</div>
+        <div class="dis low" style="--y:514px;left:344px;width:90px">00000-000</div>
+        <div class="lb low" style="--y:541px;left:11px">Cidade</div>
+        <div class="dis low" style="--y:552px;left:11px;width:78px">MANAUS</div>
+        <div class="lb low" style="--y:541px;left:126px">UF</div>
+        <div class="dis low" style="--y:552px;left:126px;width:26px">AM</div>
+        <div class="lb low" style="--y:541px;left:158px">Telefone</div>
+        <div class="dis low" style="--y:552px;left:158px;width:135px">(92) 0000-0000</div>
+        <div class="lb low" style="--y:541px;left:296px">C.P.F.:</div>
+        <div class="dis low" style="--y:552px;left:296px;width:138px">000.000.000-00</div>
+        <div class="lb low" style="--y:580px;left:11px">R.G.:</div>
+        <div class="dis low" id="w_rg" style="--y:591px;left:11px;width:104px"></div>
+        <div class="lb low" style="--y:580px;left:120px">Orgão Expeditor</div>
+        <div class="dis low" style="--y:591px;left:120px;width:104px">SSP/AM</div>
+        <div class="lb low" style="--y:580px;left:229px">Dt.Emissão</div>
+        <div class="dis low" style="--y:591px;left:229px;width:104px">01/01/2020</div>
+        <div class="lb low" style="--y:580px;left:338px">C.N.H.:</div>
+        <div class="dis low" style="--y:591px;left:338px;width:96px">00000000000</div>
+
+        <div class="hl low" style="--y:628px"></div>
+        <div class="hl low" style="--y:634px"></div>
+        <div class="wbtn low" style="--y:643px;left:362px" id="btnSai">
+          <svg width="20" height="20" viewBox="0 0 20 20"><path d="M3 3 L17 17 M17 3 L3 17" stroke="#d01010" stroke-width="4" stroke-linecap="round"/></svg><span><u>S</u>ai</span>
+        </div>
+        <div class="wbtn low" style="--y:643px;left:460px" id="btnOk">
+          <svg width="22" height="20" viewBox="0 0 22 20"><path d="M2 11 L8 17 L20 3" fill="none" stroke="#1450c8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg><span><u>O</u>k</span>
+        </div>
+      </div>
+      </div></div>
+      <p class="hint" id="faseHint"></p>
+    </div>
+    <div class="col">
+      <h4>Cautela final, como vai sair impressa <span class="live">ao vivo</span></h4>
+      <div class="paper-wrap"><div class="fit" data-w="794"><div class="scaler" id="cautLive"></div></div></div>
+      <p class="hint">Área destacada em amarelo = texto da observação (o destaque não sai na impressão). O círculo tracejado mostra onde cabe o carimbo.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 4. ANTES x DEPOIS -->
+<section id="cautela">
+  <div class="sec-h"><span class="n">05</span><h2>Cautela impressa: antes × depois</h2></div>
+  <p class="sec-sub">Mesmos dados nas duas versões. Só muda o quadro OBS: o texto sai digitado dentro do documento, há espaço para o carimbo, e o resto do layout continua idêntico.</p>
+  <div class="compare">
+    <div class="card"><h4><span class="pill red">ANTES</span> layout atual</h4><div class="paper-wrap"><div class="fit" data-w="794"><div class="scaler" id="cautAntes"></div></div></div></div>
+    <div class="card"><h4><span class="pill green">DEPOIS</span> com observação</h4><div class="paper-wrap"><div class="fit" data-w="794"><div class="scaler" id="cautDepois"></div></div></div></div>
+  </div>
+</section>
+
+<!-- 5. EDITOR -->
+<section id="editor">
+  <div class="sec-h"><span class="n">06</span><h2>Para o T.I.: o modelo da cautela no editor</h2></div>
+  <p class="sec-sub">O desenho da cautela fica num arquivo do SIGET chamado <code>cautsai.fr3</code>, que é o modelo que o programa usa para montar e imprimir a cautela. Ele é editado pelo editor de relatórios (FastReport) que já vem no SIGET. Abaixo está como o T.I. vai ver esse modelo no editor. As alterações estão marcadas em amarelo. As 3 páginas (3 vias) têm o mesmo layout e receberam a mesma alteração.</p>
+  <div class="demo-bar">
+    <div class="seg" id="segEd">
+      <button class="on" data-v="depois">Depois (editado)</button>
+      <button data-v="antes">Antes (original)</button>
+    </div>
+  </div>
+  <div class="tabs" id="edTabs"><button data-t="code">Code</button><button>Data</button><button class="on" data-t="page">Page1</button><button data-t="page">Page2</button><button data-t="page">Page3</button></div>
+  <div class="ed-frame">
+    <div id="edPage"><div class="fit" data-w="794"><div class="scaler" id="edSheet"></div></div></div>
+    <div id="edCode" style="display:none"><pre class="code" id="codeBox"></pre></div>
+  </div>
+
+  <div class="tw" style="margin-top:20px">
+    <table class="t">
+      <thead><tr><th>Objeto (Page1 / Page2 / Page3)</th><th>Propriedade</th><th>Antes</th><th>Depois</th></tr></thead>
+      <tbody>
+        <tr><td>Campo OBS<br><span class="muted small">Memo18 / Memo20 / Memo43</span></td><td>Text</td><td><code>[ATODECLA]</code></td><td><code>[ObsExtra]</code></td></tr>
+        <tr><td></td><td>Height · Font.Height · StretchMode</td><td>20 · -12 · smMaxHeight</td><td>54 (3 linhas) · -15 · fixo, WordWrap</td></tr>
+        <tr><td>Quadro OBS<br><span class="muted small">Memo6 / Memo9 / Memo37</span></td><td>Height</td><td>86,93</td><td>157,93 (+71 ≈ 19 mm)</td></tr>
+        <tr><td>Assinatura "PORTO CHIBATÃO"<br><span class="muted small">Memo10 / Memo16 / Memo40</span></td><td>Top</td><td>≈ 290</td><td>≈ 361</td></tr>
+        <tr><td>Motorista / CNH-RG<br><span class="muted small">Memo8 / Memo112 / Memo141</span></td><td>Top</td><td>≈ 290</td><td>≈ 361</td></tr>
+        <tr><td>Operador / Ct.<br><span class="muted small">Memo5 / Memo17 / Memo41</span></td><td>Top</td><td>≈ 313</td><td>≈ 384</td></tr>
+        <tr><td>MasterData1 / 2 / 3</td><td>Height</td><td>344,19</td><td>415,19</td></tr>
+        <tr><td>Script (aba Code)</td><td>—</td><td>—</td><td>+ variável <code>ObsExtra</code> e <code>InputBox</code> no bloco principal</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 6. TÉCNICO -->
+<section id="tecnico">
+  <div class="sec-h"><span class="n">07</span><h2>Para o T.I.: especificação técnica</h2></div>
+  <p class="sec-sub">O que muda, onde, e como. A Fase 1 é aplicável pelo próprio T.I.; a Fase 2 deve ser encaminhada ao fornecedor do SIGET.</p>
+  <div class="grid2">
+    <div class="card">
+      <h3>Fase 1: script do relatório (aba Code)</h3>
+      <p class="small muted">Só 2 linhas novas; o resto é o código original. O bloco principal <code>begin…end.</code> roda uma vez por geração, então a janela aparece uma vez para as 3 vias.</p>
+      <pre class="code" id="codeF1"></pre>
+    </div>
+    <div class="card">
+      <h3>Fase 2: pedido ao fornecedor</h3>
+      <ol class="steps small">
+        <li><b>Banco (Firebird):</b> nova coluna na tabela de saída de carretas (nome da tabela a confirmar com o fornecedor):<pre class="code" style="margin-top:6px">ALTER TABLE &lt;TABELA_SAIDA&gt; ADD OBS_CAUTELA VARCHAR(200);</pre></li>
+        <li><b>Tela "Saída de carretas":</b> TMemo "Obs. Cautela" (3 linhas, máx. 200 caracteres) abaixo do painel de diárias; gravar no Ok junto com a saída.</li>
+        <li><b>Dataset da cautela:</b> incluir <code>OBS_CAUTELA</code> no <code>tabela1_0</code> enviado ao FastReport.</li>
+        <li><b>Relatório:</b> trocar <code>[ObsExtra]</code> por <code>[&lt;tabela1_0."obs_cautela"&gt;]</code> e remover o <code>InputBox</code>.</li>
+        <li><b>Reimpressão:</b> deve trazer a observação gravada.</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="tw" style="margin-top:20px">
+    <table class="t">
+      <thead><tr><th></th><th>Hoje</th><th>Fase 1 (relatório)</th><th>Fase 2 (fornecedor)</th></tr></thead>
+      <tbody>
+        <tr><td><b>Onde digita</b></td><td>À mão, no papel</td><td>Janela ao imprimir</td><td>Campo na tela de Saída</td></tr>
+        <tr><td><b>Sai nas 3 vias igual</b></td><td>Não</td><td>Sim</td><td>Sim</td></tr>
+        <tr><td><b>Fica gravado no SIGET</b></td><td>Não</td><td>Não</td><td>Sim</td></tr>
+        <tr><td><b>Reimpressão</b></td><td>Não</td><td>Digita de novo</td><td>Automática</td></tr>
+        <tr><td><b>O que muda</b></td><td>—</td><td><code>cautsai.fr3</code></td><td>siget.exe + banco + <code>cautsai.fr3</code></td></tr>
+        <tr><td><b>Quem faz</b></td><td>—</td><td>T.I. interno</td><td>Fornecedor do SIGET</td></tr>
+        <tr><td><b>Risco</b></td><td>—</td><td>Baixo (rollback = arquivo antigo)</td><td>Médio (versão nova do sistema)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <span class="pill amber">FASE 3 · SUGESTÃO</span>
+    <h3 style="margin-top:8px">Agilizar o envio para a GRC e a portaria</h3>
+    <div class="grid2">
+      <ul class="clean">
+        <li><b>Modelos de OBS</b> na tela: uma lista com as frases mais usadas ("Bitrem – saída por partes", "Carreta prancha com container"...), preenchendo lacres e números automaticamente.</li>
+        <li><b>Envio automático por e-mail</b>: ao confirmar a saída, o SIGET gera o PDF da cautela e envia para a GRC, sem digitalizar nem anexar à mão.</li>
+      </ul>
+      <ul class="clean">
+        <li><b>Viabilidade:</b> o FastReport embutido no SIGET já tem exportação para PDF e envio por e-mail (recurso "Send by E-mail", identificado na análise do executável). O fornecedor só precisa acionar isso no fluxo de saída.</li>
+        <li><b>Alternativa:</b> se a GRC tiver acesso ao SIGET, pode consultar a observação gravada (Fase 2) direto no sistema.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout"><b>Observação encontrada na análise:</b> na linha do Container, o rótulo "Tipo:" mostra <code>[dtipolacre]</code> (tipo do <b>lacre</b>), o mesmo valor de "Tipo lacre". Se a intenção era mostrar o tipo do container, vale o fornecedor revisar. Não alteramos isso.</div>
+</section>
+
+<!-- 7. IMPLANTAÇÃO -->
+<section id="implantacao">
+  <div class="sec-h"><span class="n">08</span><h2>Implantação da Fase 1 e testes</h2></div>
+  <div class="grid2">
+    <div class="card">
+      <h3>Passo a passo</h3>
+      <ol class="steps">
+        <li><b>Backup:</b> copiar <code>cautsai.fr3</code> do servidor para <code>cautsai_BACKUP_AAAAMMDD.fr3</code>.</li>
+        <li><b>Abrir no editor</b> do SIGET o arquivo entregue <code>cautela_COM_OBS.fr3</code>.</li>
+        <li><b>Preview</b> (Ctrl+P): a janela "Observação" deve aparecer; digitar um texto e conferir as 3 vias.</li>
+        <li><b>Salvar</b> como <code>cautsai.fr3</code> (mesmo procedimento usado hoje).</li>
+        <li><b>Teste real:</b> uma saída de carreta com e outra sem observação.</li>
+      </ol>
+      <div class="callout green small"><b>Rollback:</b> copiar o backup de volta sobre <code>cautsai.fr3</code>. Nenhuma outra parte do sistema é afetada.</div>
+    </div>
+    <div class="card">
+      <h3>Critérios de aceite</h3>
+      <ul class="checklist" style="padding:0;margin:0">
+        <li>Com observação: o texto aparece na linha OBS das 3 vias.</li>
+        <li>Sem observação (OK em branco): a cautela sai sem texto na OBS.</li>
+        <li>Texto de até 3 linhas não invade as assinaturas.</li>
+        <li>O carimbo cabe sem cobrir o texto.</li>
+        <li>Demais campos, código de barras e layout continuam iguais.</li>
+        <li>Fase 2: a observação fica gravada e aparece na reimpressão.</li>
+      </ul>
+      <h3 style="margin-top:18px">Arquivos entregues</h3>
+      <ul class="clean small">
+        <li><code>fr3/cautela_COM_OBS.fr3</code>: relatório editado (Fase 1)</li>
+        <li><code>fr3/cautela_ORIGINAL.fr3</code>: cópia do relatório atual</li>
+        <li><code>fr3/codigo_aba_Code.txt</code>: script completo</li>
+        <li><code>PEDIDO_FORNECEDOR_campo_obs.md</code>: pedido da Fase 2</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>Proposta de melhoria · Cautela de Saída de Veículo/Container (SIGET). Os dados exibidos são fictícios, usados só como exemplo. As cautelas mostradas foram desenhadas a partir do modelo real usado pelo SIGET.</footer>
+
+<!-- InputBox (Fase 1) -->
+<div class="modal-bg" id="ibox"><div class="ibox">
+  <div class="tt"><span>Cautela de saída</span><span>✕</span></div>
+  <div class="bd">Observação (sai na linha OBS da cautela). Deixe em branco se não houver:<input id="iboxIn" maxlength="200"></div>
+  <div class="ft"><button class="def" id="iboxOk">OK</button><button id="iboxCancel">Cancel</button></div>
+</div></div>
+
+<div id="printArea"></div>
+
+<script>
+const FR3 = {"depois":{"els":[{"t":"TfrxMemoView","x":30.456702677165357,"y":284.26004267716536,"w":715.08680457,"h":157.92919,"f":11,"fh":15,"fn":"Times New Roman","b":false,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":30.456702677165357,"y":103.06307267716537,"w":212.40931457,"h":26.45671,"f":11,"fh":15,"fn":"Times New Roman","b":false,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":450.76406267716533,"y":57.488242677165353,"w":294.80334,"h":45.35436,"f":15,"fh":15,"fn":"Times New Roman","b":true,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":259.92918267716533,"y":391.69294267716532,"w":204,"h":20,"f":4,"fh":12,"fn":"Times New Roman","b":false,"ha":"haCenter","va":"","tx":"PORTO CHIBATÃO"},{"t":"TfrxMemoView","x":33.456702677165353,"y":414.91341267716535,"w":236.22016,"h":16.22047,"f":0,"fh":8,"fn":"Times New Roman","b":false,"ha":"","va":"","tx":"Operador:[\u003ctabela1_0.\"usuario\"\u003e]   Ct.:[\u003ctabela1_0.\"cont_veic\"\u003e]"},{"t":"TfrxBarCodeView","x":507.76375267716531,"y":63.850332677165355,"w":208,"h":22.66141,"f":0,"fh":12,"fn":"Arial","b":false,"ha":"","va":"","tx":"12345678"},{"t":"TfrxMemoView","x":514.3388926771654,"y":85.063072677165351,"w":196.53556,"h":18.89765,"f":0,"fh":13,"fn":"Courier New","b":false,"ha":"haCenter","va":"","tx":"[barras][digitoEAN13(\u003cbarras\u003e)]"},{"t":"TfrxMemoView","x":91.488242677165346,"y":286.26004267716536,"w":610.39363,"h":54,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"","va":"","tx":"[ObsExtra]"},{"t":"TfrxMemoView","x":30.456702677165357,"y":31.354352677165355,"w":419.52783,"h":26.45671,"f":15,"fh":15,"fn":"Times New Roman","b":true,"ha":"haCenter","va":"vaCenter","tx":"PORTO CHIBATÃO"},{"t":"TfrxMemoView","x":450.76406267716533,"y":31.354352677165355,"w":294.80334,"h":26.45671,"f":15,"fh":15,"fn":"Times New Roman","b":true,"ha":"haCenter","va":"vaCenter","tx":"Nº. [\u003ctabela1_0.\"doc_saida\"\u003e]"},{"t":"TfrxMemoView","x":30.456702677165357,"y":57.488242677165353,"w":419.52783,"h":45.35436,"f":15,"fh":16,"fn":"Times New Roman","b":true,"ha":"haCenter","va":"vaCenter","tx":"CAUTELA DE SAIDA DE VEICULO/CONTAINER"},{"t":"TfrxMemoView","x":34.236232677165354,"y":106.84260267716536,"w":204.09462,"h":18.89765,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"","va":"vaCenter","tx":"Chegada: [formatdatetime(\u0027dd/mm/yyyy hh:mm\u0027,\u003ctabela1_0.\"chegada\"\u003e)]"},{"t":"TfrxMemoView","x":242.11038267716538,"y":103.06307267716537,"w":207.87401575,"h":26.45671,"f":14,"fh":15,"fn":"Times New Roman","b":false,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":245.88991267716537,"y":106.84260267716536,"w":204.09462,"h":18.89765,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"","va":"vaCenter","tx":"Saída:[\u003ctabela1_0.\"retirada_cliente\"\u003e]"},{"t":"TfrxMemoView","x":450.76406267716533,"y":103.06307267716537,"w":294.80320575,"h":26.45671,"f":15,"fh":15,"fn":"Times New Roman","b":true,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":472.66171267716533,"y":106.84260267716536,"w":260.78757,"h":18.89765,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"haCenter","va":"vaCenter","tx":"Estadia : [xtempo]"},{"t":"TfrxMemoView","x":30.456702677165357,"y":129.29931267716535,"w":419.52769575,"h":26.45671,"f":15,"fh":15,"fn":"Times New Roman","b":true,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":34.236232677165354,"y":133.07884267716534,"w":385.51206,"h":18.89765,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"","va":"vaCenter","tx":"Empurrador : [tabela1_0.\"NOME_EMPUR\"]"},{"t":"TfrxMemoView","x":450.76406267716533,"y":129.07884267716534,"w":294.80320575,"h":26.45671,"f":15,"fh":15,"fn":"Times New Roman","b":true,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":457.54359267716535,"y":133.07884267716534,"w":275.90569,"h":18.89765,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"","va":"vaCenter","tx":"Trecho : [trecho]"},{"t":"TfrxMemoView","x":30.456702677165357,"y":155.53555267716536,"w":715.08661417,"h":26.45671,"f":15,"fh":15,"fn":"Times New Roman","b":true,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":34.236232677165354,"y":159.31508267716535,"w":619.84292,"h":18.89765,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"","va":"vaCenter","tx":"Transportador : [\u003ctabela1_0.\"nome\"\u003e]"},{"t":"TfrxMemoView","x":30.456702677165357,"y":182.99226267716537,"w":212.40931457,"h":26.45671,"f":11,"fh":15,"fn":"Times New Roman","b":false,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":34.236232677165354,"y":186.55132267716536,"w":204.09462,"h":18.89765,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"","va":"vaCenter","tx":"Carreta: [\u003ctabela1_0.\"carreta\"\u003e]"},{"t":"TfrxMemoView","x":243.11038267716538,"y":182.77179267716537,"w":207.87401575,"h":26.45671,"f":14,"fh":15,"fn":"Times New Roman","b":false,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":249.88991267716537,"y":186.55132267716536,"w":192.75603,"h":18.89765,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"","va":"vaCenter","tx":"Frota: [\u003ctabela1_0.\"frota\"\u003e]"},{"t":"TfrxMemoView","x":451.76406267716533,"y":182.77179267716537,"w":293.29133858,"h":26.45671,"f":14,"fh":15,"fn":"Times New Roman","b":false,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":457.32312267716532,"y":186.55132267716536,"w":192.75603,"h":18.89765,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"","va":"vaCenter","tx":"Cavalo: [\u003ctabela1_0.\"cavalo\"\u003e]"},{"t":"TfrxMemoView","x":30.456702677165357,"y":210.56709267716536,"w":421.03937008,"h":22.67718,"f":11,"fh":15,"fn":"Times New Roman","b":true,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":34.236232677165354,"y":212.56709267716536,"w":404.40971,"h":18.89765,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"","va":"vaCenter","tx":"Container: [\u003ctabela1_0.\"chassis\"\u003e]"},{"t":"TfrxMemoView","x":450.76406267716533,"y":209.78756267716537,"w":294.803149606299,"h":23.43307087,"f":14,"fh":15,"fn":"Times New Roman","b":false,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":456.54359267716535,"y":211.56709267716536,"w":192.75603,"h":18.89765,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"","va":"vaCenter","tx":"Tipo: [dtipolacre]"},{"t":"TfrxMemoView","x":30.456702677165357,"y":234.24427267716536,"w":144.37777457,"h":26.45671,"f":11,"fh":15,"fn":"Times New Roman","b":false,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":34.236232677165354,"y":237.80333267716537,"w":113.3859,"h":18.89765,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"","va":"vaCenter","tx":"Lacre: [\u003ctabela1_0.\"lacre\"\u003e]"},{"t":"TfrxMemoView","x":174.07884267716537,"y":234.24427267716536,"w":144.37777457,"h":26.45671,"f":11,"fh":15,"fn":"Times New Roman","b":false,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":177.85837267716536,"y":236.80333267716537,"w":113.3859,"h":18.89765,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"","va":"vaCenter","tx":"Tipo lacre:[dtipolacre]"},{"t":"TfrxMemoView","x":318.70098267716531,"y":234.24427267716536,"w":223.74790457,"h":26.45671,"f":11,"fh":15,"fn":"Times New Roman","b":false,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":321.48051267716534,"y":236.80333267716537,"w":181.41744,"h":18.89765,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"","va":"vaCenter","tx":"Pedágio:[\u003ctabela1_0.\"pedagio\"\u003e]"},{"t":"TfrxMemoView","x":542.47278267716536,"y":234.24427267716536,"w":202.58267717,"h":26.45671,"f":11,"fh":15,"fn":"Times New Roman","b":false,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":547.47278267716536,"y":236.80333267716537,"w":181.41744,"h":18.89765,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"","va":"vaCenter","tx":"Sefaz: [\u003ctabela1_0.\"cautela_sefaz\"\u003e]"},{"t":"TfrxMemoView","x":30.456702677165357,"y":260.48051267716534,"w":212.40931457,"h":22.67718,"f":11,"fh":15,"fn":"Times New Roman","b":false,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":34.236232677165354,"y":263.26004267716536,"w":204.09462,"h":15.11812,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"","va":"vaCenter","tx":"Cavalo retirando:[FormatMaskText(\u0027ccc-cccc;10;\u0027,\u003ctabela1_0.\"cavalo_retirando\"\u003e)]"},{"t":"TfrxMemoView","x":242.11038267716538,"y":260.48051267716534,"w":207.87401575,"h":22.67718,"f":14,"fh":15,"fn":"Times New Roman","b":false,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":245.88991267716537,"y":262.26004267716536,"w":196.53556,"h":18.89765,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"","va":"vaCenter","tx":"Tipo:[dtipocavalo]"},{"t":"TfrxMemoView","x":449.98453267716536,"y":260.48051267716534,"w":295.55905512,"h":22.67718,"f":14,"fh":15,"fn":"Times New Roman","b":false,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":457.54359267716535,"y":262.26004267716536,"w":279.68522,"h":18.89765,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"","va":"vaCenter","tx":"Transbordo: [FormatMaskText(\u0027ccc-cccc;10;\u0027,\u003ctabela1_0.\"transbordo\"\u003e)]"},{"t":"TfrxMemoView","x":34.015762677165355,"y":286.02380267716535,"w":52.91342,"h":18.89765,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"","va":"vaCenter","tx":"OBS : "},{"t":"TfrxMemoView","x":494.63017267716532,"y":391.71675267716535,"w":204,"h":27.55906,"f":4,"fh":11,"fn":"Times New Roman","b":false,"ha":"haCenter","va":"","tx":"[\u003ctabela1_0.\"motorista\"\u003e]\r\nCNH/RG: [\u003ctabela1_0.\"cnhrg\"\u003e]"}],"bandH":445.42516267716536},"antes":{"els":[{"t":"TfrxMemoView","x":30.456702677165357,"y":284.26004267716536,"w":715.08680457,"h":86.92919,"f":11,"fh":15,"fn":"Times New Roman","b":false,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":30.456702677165357,"y":103.06307267716537,"w":212.40931457,"h":26.45671,"f":11,"fh":15,"fn":"Times New Roman","b":false,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":450.76406267716533,"y":57.488242677165353,"w":294.80334,"h":45.35436,"f":15,"fh":15,"fn":"Times New Roman","b":true,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":259.92918267716533,"y":320.69294267716532,"w":204,"h":20,"f":4,"fh":12,"fn":"Times New Roman","b":false,"ha":"haCenter","va":"","tx":"PORTO CHIBATÃO"},{"t":"TfrxMemoView","x":33.456702677165353,"y":343.91341267716535,"w":236.22016,"h":16.22047,"f":0,"fh":8,"fn":"Times New Roman","b":false,"ha":"","va":"","tx":"Operador:[\u003ctabela1_0.\"usuario\"\u003e]   Ct.:[\u003ctabela1_0.\"cont_veic\"\u003e]"},{"t":"TfrxBarCodeView","x":507.76375267716531,"y":63.850332677165355,"w":208,"h":22.66141,"f":0,"fh":12,"fn":"Arial","b":false,"ha":"","va":"","tx":"12345678"},{"t":"TfrxMemoView","x":514.3388926771654,"y":85.063072677165351,"w":196.53556,"h":18.89765,"f":0,"fh":13,"fn":"Courier New","b":false,"ha":"haCenter","va":"","tx":"[barras][digitoEAN13(\u003cbarras\u003e)]"},{"t":"TfrxMemoView","x":91.488242677165346,"y":286.26004267716536,"w":610.39363,"h":20,"f":0,"fh":12,"fn":"Times New Roman","b":false,"ha":"","va":"","tx":"[ATODECLA]"},{"t":"TfrxMemoView","x":30.456702677165357,"y":31.354352677165355,"w":419.52783,"h":26.45671,"f":15,"fh":15,"fn":"Times New Roman","b":true,"ha":"haCenter","va":"vaCenter","tx":"PORTO CHIBATÃO"},{"t":"TfrxMemoView","x":450.76406267716533,"y":31.354352677165355,"w":294.80334,"h":26.45671,"f":15,"fh":15,"fn":"Times New Roman","b":true,"ha":"haCenter","va":"vaCenter","tx":"Nº. [\u003ctabela1_0.\"doc_saida\"\u003e]"},{"t":"TfrxMemoView","x":30.456702677165357,"y":57.488242677165353,"w":419.52783,"h":45.35436,"f":15,"fh":16,"fn":"Times New Roman","b":true,"ha":"haCenter","va":"vaCenter","tx":"CAUTELA DE SAIDA DE VEICULO/CONTAINER"},{"t":"TfrxMemoView","x":34.236232677165354,"y":106.84260267716536,"w":204.09462,"h":18.89765,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"","va":"vaCenter","tx":"Chegada: [formatdatetime(\u0027dd/mm/yyyy hh:mm\u0027,\u003ctabela1_0.\"chegada\"\u003e)]"},{"t":"TfrxMemoView","x":242.11038267716538,"y":103.06307267716537,"w":207.87401575,"h":26.45671,"f":14,"fh":15,"fn":"Times New Roman","b":false,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":245.88991267716537,"y":106.84260267716536,"w":204.09462,"h":18.89765,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"","va":"vaCenter","tx":"Saída:[\u003ctabela1_0.\"retirada_cliente\"\u003e]"},{"t":"TfrxMemoView","x":450.76406267716533,"y":103.06307267716537,"w":294.80320575,"h":26.45671,"f":15,"fh":15,"fn":"Times New Roman","b":true,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":472.66171267716533,"y":106.84260267716536,"w":260.78757,"h":18.89765,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"haCenter","va":"vaCenter","tx":"Estadia : [xtempo]"},{"t":"TfrxMemoView","x":30.456702677165357,"y":129.29931267716535,"w":419.52769575,"h":26.45671,"f":15,"fh":15,"fn":"Times New Roman","b":true,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":34.236232677165354,"y":133.07884267716534,"w":385.51206,"h":18.89765,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"","va":"vaCenter","tx":"Empurrador : [tabela1_0.\"NOME_EMPUR\"]"},{"t":"TfrxMemoView","x":450.76406267716533,"y":129.07884267716534,"w":294.80320575,"h":26.45671,"f":15,"fh":15,"fn":"Times New Roman","b":true,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":457.54359267716535,"y":133.07884267716534,"w":275.90569,"h":18.89765,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"","va":"vaCenter","tx":"Trecho : [trecho]"},{"t":"TfrxMemoView","x":30.456702677165357,"y":155.53555267716536,"w":715.08661417,"h":26.45671,"f":15,"fh":15,"fn":"Times New Roman","b":true,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":34.236232677165354,"y":159.31508267716535,"w":619.84292,"h":18.89765,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"","va":"vaCenter","tx":"Transportador : [\u003ctabela1_0.\"nome\"\u003e]"},{"t":"TfrxMemoView","x":30.456702677165357,"y":182.99226267716537,"w":212.40931457,"h":26.45671,"f":11,"fh":15,"fn":"Times New Roman","b":false,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":34.236232677165354,"y":186.55132267716536,"w":204.09462,"h":18.89765,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"","va":"vaCenter","tx":"Carreta: [\u003ctabela1_0.\"carreta\"\u003e]"},{"t":"TfrxMemoView","x":243.11038267716538,"y":182.77179267716537,"w":207.87401575,"h":26.45671,"f":14,"fh":15,"fn":"Times New Roman","b":false,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":249.88991267716537,"y":186.55132267716536,"w":192.75603,"h":18.89765,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"","va":"vaCenter","tx":"Frota: [\u003ctabela1_0.\"frota\"\u003e]"},{"t":"TfrxMemoView","x":451.76406267716533,"y":182.77179267716537,"w":293.29133858,"h":26.45671,"f":14,"fh":15,"fn":"Times New Roman","b":false,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":457.32312267716532,"y":186.55132267716536,"w":192.75603,"h":18.89765,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"","va":"vaCenter","tx":"Cavalo: [\u003ctabela1_0.\"cavalo\"\u003e]"},{"t":"TfrxMemoView","x":30.456702677165357,"y":210.56709267716536,"w":421.03937008,"h":22.67718,"f":11,"fh":15,"fn":"Times New Roman","b":true,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":34.236232677165354,"y":212.56709267716536,"w":404.40971,"h":18.89765,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"","va":"vaCenter","tx":"Container: [\u003ctabela1_0.\"chassis\"\u003e]"},{"t":"TfrxMemoView","x":450.76406267716533,"y":209.78756267716537,"w":294.803149606299,"h":23.43307087,"f":14,"fh":15,"fn":"Times New Roman","b":false,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":456.54359267716535,"y":211.56709267716536,"w":192.75603,"h":18.89765,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"","va":"vaCenter","tx":"Tipo: [dtipolacre]"},{"t":"TfrxMemoView","x":30.456702677165357,"y":234.24427267716536,"w":144.37777457,"h":26.45671,"f":11,"fh":15,"fn":"Times New Roman","b":false,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":34.236232677165354,"y":237.80333267716537,"w":113.3859,"h":18.89765,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"","va":"vaCenter","tx":"Lacre: [\u003ctabela1_0.\"lacre\"\u003e]"},{"t":"TfrxMemoView","x":174.07884267716537,"y":234.24427267716536,"w":144.37777457,"h":26.45671,"f":11,"fh":15,"fn":"Times New Roman","b":false,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":177.85837267716536,"y":236.80333267716537,"w":113.3859,"h":18.89765,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"","va":"vaCenter","tx":"Tipo lacre:[dtipolacre]"},{"t":"TfrxMemoView","x":318.70098267716531,"y":234.24427267716536,"w":223.74790457,"h":26.45671,"f":11,"fh":15,"fn":"Times New Roman","b":false,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":321.48051267716534,"y":236.80333267716537,"w":181.41744,"h":18.89765,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"","va":"vaCenter","tx":"Pedágio:[\u003ctabela1_0.\"pedagio\"\u003e]"},{"t":"TfrxMemoView","x":542.47278267716536,"y":234.24427267716536,"w":202.58267717,"h":26.45671,"f":11,"fh":15,"fn":"Times New Roman","b":false,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":547.47278267716536,"y":236.80333267716537,"w":181.41744,"h":18.89765,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"","va":"vaCenter","tx":"Sefaz: [\u003ctabela1_0.\"cautela_sefaz\"\u003e]"},{"t":"TfrxMemoView","x":30.456702677165357,"y":260.48051267716534,"w":212.40931457,"h":22.67718,"f":11,"fh":15,"fn":"Times New Roman","b":false,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":34.236232677165354,"y":263.26004267716536,"w":204.09462,"h":15.11812,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"","va":"vaCenter","tx":"Cavalo retirando:[FormatMaskText(\u0027ccc-cccc;10;\u0027,\u003ctabela1_0.\"cavalo_retirando\"\u003e)]"},{"t":"TfrxMemoView","x":242.11038267716538,"y":260.48051267716534,"w":207.87401575,"h":22.67718,"f":14,"fh":15,"fn":"Times New Roman","b":false,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":245.88991267716537,"y":262.26004267716536,"w":196.53556,"h":18.89765,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"","va":"vaCenter","tx":"Tipo:[dtipocavalo]"},{"t":"TfrxMemoView","x":449.98453267716536,"y":260.48051267716534,"w":295.55905512,"h":22.67718,"f":14,"fh":15,"fn":"Times New Roman","b":false,"ha":"haCenter","va":"vaCenter","tx":""},{"t":"TfrxMemoView","x":457.54359267716535,"y":262.26004267716536,"w":279.68522,"h":18.89765,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"","va":"vaCenter","tx":"Transbordo: [FormatMaskText(\u0027ccc-cccc;10;\u0027,\u003ctabela1_0.\"transbordo\"\u003e)]"},{"t":"TfrxMemoView","x":34.015762677165355,"y":286.02380267716535,"w":52.91342,"h":18.89765,"f":0,"fh":15,"fn":"Times New Roman","b":false,"ha":"","va":"vaCenter","tx":"OBS : "},{"t":"TfrxMemoView","x":494.63017267716532,"y":320.71675267716535,"w":204,"h":27.55906,"f":4,"fh":11,"fn":"Times New Roman","b":false,"ha":"haCenter","va":"","tx":"[\u003ctabela1_0.\"motorista\"\u003e]\r\nCNH/RG: [\u003ctabela1_0.\"cnhrg\"\u003e]"}],"bandH":374.42516267716536}};
+
+/* ---------- Dados de exemplo (fictícios) ---------- */
+const LINHAS = [
+  { controle: 2915861, chegada: '10/11/2026 08:00:00', tipo: 'CSC', carreta: 'QXT-4B21', cavalo: '', frota: 'RTA-8C55', chassis: '',
+    doc: '1162230', empurrador: 'EMPURRADOR EXEMPLO I', transportador: 'TRANSPORTADORA EXEMPLO LTDA', cliente: 'CLIENTE EXEMPLO LOGISTICA LTDA',
+    codcli: '1520', condutor: 'JOSE EXEMPLO DA SILVA', codcond: '187', rg: '1234567-0' },
+  { controle: 2915874, chegada: '10/11/2026 06:30:00', tipo: 'CTN', carreta: 'NBR-2F18', cavalo: '', frota: 'KLP-3D90', chassis: 'ABCU 123456-7',
+    doc: '1162231', empurrador: 'EMPURRADOR EXEMPLO II', transportador: 'LOGISTICA MODELO TRANSPORTES LTDA', cliente: 'COMERCIAL MODELO S/A',
+    codcli: '2033', condutor: 'MARIA EXEMPLO SOUZA', codcond: '245', rg: '7654321-0' }
+];
+const EXEMPLO = { pedagio: '2415281', cavret: 'AHN-2D86', tipocav: 'Volvo', transb: '977-29', lacre: '97726', tipolacre: 'Ferro', sefaz: '3090033267',
+  obs: 'Veículo liberado com avaria no para-choque traseiro, conforme vistoria da balança. Motorista ciente e de acordo. Retorno previsto para 12/11/2026.' };
+const OPERADOR = 'OPERADOR EXEMPLO';
+const EMPRESA = '02', TRECHO = 'BEL / MAO';
+const DATA_SAIDA = '10/11/2026', HORA_SAIDA = '09:54';
+
+let sel = 0, fase = 2, obsFase1 = '';
+const $ = id => document.getElementById(id);
+
+/* ---------- EAN-13 ---------- */
+const EL = ['0001101','0011001','0010011','0111101','0100011','0110001','0101111','0111011','0110111','0001011'];
+const PAR = ['LLLLLL','LLGLGG','LLGGLG','LLGGGL','LGLLGG','LGGLLG','LGGGLL','LGLGLG','LGLGGL','LGGLGL'];
+function ean13check(d12) { let s = 0; for (let i = 0; i < 12; i++) s += +d12[i] * (i % 2 ? 3 : 1); return (10 - s % 10) % 10; }
+function ean13svg(digits) {
+  const d = (digits.replace(/\D/g, '') + '000000000000').slice(0, 12);
+  const full = d + ean13check(d);
+  let bits = '101';
+  const p = PAR[+full[0]];
+  for (let i = 1; i <= 6; i++) { const L = EL[+full[i]]; bits += p[i-1] === 'L' ? L : [...L].map(c => c === '1' ? '0' : '1').reverse().join(''); }
+  bits += '01010';
+  for (let i = 7; i <= 12; i++) bits += [...EL[+full[i]]].map(c => c === '1' ? '0' : '1').join('');
+  bits += '101';
+  let r = '';
+  for (let i = 0; i < bits.length; i++) if (bits[i] === '1') r += `<rect x="${i}" y="0" width="1" height="10" fill="#000"/>`;
+  return `<svg viewBox="0 0 ${bits.length} 10" preserveAspectRatio="none" width="100%" height="100%">${r}</svg>`;
+}
+
+/* ---------- Valores da cautela a partir da tela ---------- */
+function minutos(a, b) {
+  const p = s => { const m = s.match(/(\d+)\/(\d+)\/(\d+)\s+(\d+):(\d+)/); return m ? new Date(+m[3], m[2]-1, +m[1], +m[4], +m[5]) : null; };
+  const x = p(a), y = p(b); return x && y ? Math.max(0, Math.round((y - x) / 60000)) : 0;
+}
+function valoresDaTela() {
+  const L = LINHAS[sel];
+  const saida = `${DATA_SAIDA} ${HORA_SAIDA}:00`;
+  const m = minutos(L.chegada, saida);
+  return {
+    doc_saida: L.doc, chegada: L.chegada.slice(0, 16), retirada_cliente: saida, xtempo: `(${Math.floor(m/60)} horas ${m%60} min)`,
+    NOME_EMPUR: L.empurrador, trecho: TRECHO, nome: L.transportador, carreta: L.carreta, frota: L.frota, cavalo: L.cavalo, chassis: L.chassis,
+    dtipolacre: $('f_tipolacre').value, lacre: $('f_lacre').value, pedagio: $('f_pedagio').value, cautela_sefaz: $('f_sefaz').value,
+    cavalo_retirando: $('f_cavret').value.toUpperCase(), dtipocavalo: $('f_tipocav').value, transbordo: $('f_transb').value.toUpperCase(),
+    motorista: L.condutor, cnhrg: L.rg.replace(/\D/g, ''), usuario: OPERADOR, cont_veic: String(L.controle),
+    barras: '19' + EMPRESA + '00' + L.doc,
+    ObsExtra: fase === 2 ? $('f_obs').value : obsFase1, ATODECLA: ''
+  };
+}
+function avaliar(expr, V) {
+  if (/formatdatetime/i.test(expr)) return V.chegada;
+  if (/cavalo_retirando/.test(expr)) return V.cavalo_retirando;
+  if (/FormatMaskText.*transbordo/.test(expr)) return V.transbordo;
+  if (/digitoEAN13/.test(expr)) { const d = (V.barras.replace(/\D/g,'') + '000000000000').slice(0, 12); return String(ean13check(d)); }
+  const m = expr.match(/"([^"]+)"/); if (m) return V[m[1]] ?? '';
+  const k = expr.trim(); return V[k] ?? '';
+}
+function texto(t, V) { return (t || '').replace(/\[((?:[^\[\]]|\[[^\]]*\])*)\]/g, (_, e) => avaliar(e, V)); }
+
+/* ---------- Render do .fr3 ---------- */
+function renderFr3(host, pg, opt) {
+  // opt: mode 'print'|'design', V (valores), stamp, hand, markChanges
+  host.innerHTML = '';
+  const sheet = document.createElement('div');
+  sheet.className = 'sheet' + (opt.mode === 'design' ? ' design' : '');
+  const bandTop = 11.3 + 18.9;
+  const h = opt.mode === 'design' ? pg.bandH + 60 : pg.bandH + 18 + (opt.hand ? 56 : 0);
+  sheet.style.height = h + 'px';
+  if (opt.fullPage) sheet.style.height = '1123px';
+  if (opt.mode === 'design') {
+    const hd = document.createElement('div');
+    hd.className = 'bandhead';
+    Object.assign(hd.style, { left: '11px', top: (bandTop - 18) + 'px', width: '771px' });
+    hd.innerHTML = '<b>MasterData:</b>&nbsp;MasterData1<span class="ds">▤ tabela1_0</span>';
+    sheet.appendChild(hd);
+  }
+  let obsEl = null, assEl = null;
+  for (const e of pg.els) {
+    const d = document.createElement('div');
+    d.className = 'el';
+    Object.assign(d.style, { left: e.x + 'px', top: e.y + 'px', width: e.w + 'px', height: e.h + 'px' });
+    if (e.t === 'TfrxBarCodeView') {
+      d.style.padding = '0';
+      d.innerHTML = opt.mode === 'design'
+        ? '<div style="width:100%;height:100%;background:repeating-linear-gradient(90deg,#000 0 3px,#fff 3px 5px,#000 5px 6px,#fff 6px 9px)"></div>'
+        : ean13svg(opt.V.barras);
+      sheet.appendChild(d); continue;
+    }
+    const b = '1px solid #000';
+    if (e.f & 1) d.style.borderLeft = b; if (e.f & 2) d.style.borderRight = b;
+    if (e.f & 4) d.style.borderTop = b; if (e.f & 8) d.style.borderBottom = b;
+    d.style.fontFamily = (e.fn || 'Times New Roman') + ', serif';
+    d.style.fontSize = e.fh + 'px';
+    if (e.b) d.style.fontWeight = 'bold';
+    d.style.justifyContent = e.ha === 'haCenter' ? 'center' : 'flex-start';
+    d.style.textAlign = e.ha === 'haCenter' ? 'center' : 'left';
+    d.style.alignItems = e.va === 'vaCenter' ? 'center' : 'flex-start';
+    const isObs = /ObsExtra|ATODECLA/.test(e.tx || '');
+    if (isObs) obsEl = e;
+    if (/PORTO CHIBAT/.test(e.tx || '') && e.f === 4) assEl = e;
+    if (opt.mode === 'design') {
+      if (/usuario/.test(e.tx || '')) d.style.color = '#b0441c';
+      d.textContent = e.tx || '';
+    } else {
+      d.textContent = texto(e.tx, opt.V);
+      if (isObs && d.textContent.trim()) d.classList.add('obsfill');
+    }
+    sheet.appendChild(d);
+    if (opt.mode === 'design' && e.tx) {
+      for (const [cx, cy, bw] of [[0,0,'1px 0 0 1px'],[1,0,'1px 1px 0 0'],[0,1,'0 0 1px 1px'],[1,1,'0 1px 1px 0']]) {
+        const c = document.createElement('div'); c.className = 'cm';
+        Object.assign(c.style, { left: (e.x + cx * (e.w - 5)) + 'px', top: (e.y + cy * (e.h - 5)) + 'px', borderWidth: bw });
+        sheet.appendChild(c);
+      }
+    }
+  }
+  if (opt.stamp && obsEl && assEl) {
+    const top = obsEl.y + obsEl.h + 3, hh = assEl.y - top - 3;
+    const st = document.createElement('div'); st.className = 'stamp';
+    Object.assign(st.style, { left: (assEl.x + assEl.w / 2 - 70) + 'px', top: top + 'px', width: '140px', height: Math.max(40, hh) + 'px' });
+    st.innerHTML = 'ÁREA DO<br>CARIMBO';
+    sheet.appendChild(st);
+  }
+  if (opt.hand) {
+    const last = Math.max(...pg.els.map(e => e.y + e.h));
+    const n = document.createElement('div'); n.className = 'hand';
+    Object.assign(n.style, { left: '40px', top: (last + 10) + 'px' });
+    n.textContent = 'Obs: veículo com avaria no para-choque traseiro, motorista ciente. Retorno 12/11.';
+    sheet.appendChild(n);
+  }
+  if (opt.markChanges) {
+    const marks = [];
+    const box = pg.els.find(e => (e.tx || '') === '' && e.h > 140);
+    if (box) marks.push([box, 'Quadro OBS +19 mm']);
+    if (obsEl) marks.push([obsEl, '[ObsExtra] · 3 linhas']);
+    const ass2 = pg.els.find(e => /motorista/.test(e.tx || ''));
+    if (assEl) marks.push([assEl, 'desceu']);
+    if (ass2) marks.push([ass2, 'desceu']);
+    for (const [e, label] of marks) {
+      const m = document.createElement('div'); m.className = 'chg';
+      Object.assign(m.style, { left: e.x + 'px', top: e.y + 'px', width: e.w + 'px', height: e.h + 'px' });
+      sheet.appendChild(m);
+      const t = document.createElement('div'); t.className = 'chg-tag'; t.textContent = label;
+      Object.assign(t.style, { left: (e.x + e.w - 120) + 'px', top: (e.y - 9) + 'px' });
+      if (label.startsWith('Quadro')) Object.assign(t.style, { left: (e.x + e.w - 112) + 'px', top: (e.y + e.h - 9) + 'px' });
+      sheet.appendChild(t);
+    }
+  }
+  host.appendChild(sheet);
+  ajustarEscalas();
+}
+
+/* ---------- Escala responsiva ---------- */
+function ajustarEscalas() {
+  document.querySelectorAll('.fit').forEach(f => {
+    const s = f.querySelector('.scaler'); if (!s || !s.firstElementChild) return;
+    const w = +f.dataset.w, avail = f.clientWidth, k = Math.min(1, avail / w);
+    s.style.transform = `scale(${k})`; s.style.width = w + 'px';
+    f.style.height = (s.firstElementChild.offsetHeight * k) + 'px';
+  });
+}
+window.addEventListener('resize', ajustarEscalas);
+
+/* ---------- Tela ---------- */
+function montarGrade() {
+  $('gridBody').innerHTML = LINHAS.map((L, i) =>
+    `<tr class="${i === sel ? 'sel' : ''}" data-i="${i}"><td>${i === sel ? '▶' : ''}</td><td>${L.controle}</td><td>${L.chegada}</td><td>${L.tipo}</td><td>${L.carreta}</td><td>${L.cavalo}</td><td>${L.frota}</td><td>${L.chassis}</td></tr>`).join('');
+  $('gridBody').querySelectorAll('tr').forEach(tr => tr.onclick = () => { sel = +tr.dataset.i; atualizar(); });
+}
+function atualizar() {
+  const L = LINHAS[sel];
+  montarGrade();
+  $('f_veiculo').value = L.carreta;
+  $('f_data').value = DATA_SAIDA.slice(0, 6) + DATA_SAIDA.slice(8);
+  $('f_hora').value = HORA_SAIDA;
+  $('f_codcli').value = L.codcli; $('f_cliente').value = L.cliente;
+  $('f_codcond').value = L.codcond; $('w_condutor').textContent = L.condutor; $('w_rg').textContent = L.rg;
+  const m = minutos(L.chegada, `${DATA_SAIDA} ${HORA_SAIDA}:00`);
+  $('w_diarias').textContent = `Não ha diárias.(${Math.floor(m/60)} horas ${m%60} min)`;
+  $('w_info').innerHTML = `${L.cliente}<br>${L.tipo}<br>${L.empurrador}<br>Chegada:${L.chegada}`;
+  renderFr3($('cautLive'), FR3.depois, { mode: 'print', V: valoresDaTela(), stamp: true });
+}
+function limitar3(t) { if (t.scrollHeight > t.clientHeight + 1) t.value = t.dataset.ok || ''; else t.dataset.ok = t.value; }
+['f_pedagio','f_cavret','f_transb','f_lacre','f_sefaz','f_tipocav','f_tipolacre'].forEach(id => $(id).addEventListener('input', atualizar));
+$('f_obs').addEventListener('input', e => { limitar3(e.target); atualizar(); });
+function preencher(ex) {
+  for (const k of ['pedagio','cavret','transb','lacre','sefaz']) $('f_' + k).value = ex ? EXEMPLO[k] : '';
+  $('f_tipocav').value = ex ? EXEMPLO.tipocav : ''; $('f_tipolacre').value = ex ? EXEMPLO.tipolacre : '';
+  $('f_obs').value = ex ? EXEMPLO.obs : ''; $('f_obs').dataset.ok = $('f_obs').value;
+  obsFase1 = ex && fase === 1 ? '' : obsFase1;
+  atualizar();
+}
+$('btnExemplo').onclick = () => preencher(true);
+$('btnLimpar').onclick = () => { obsFase1 = ''; preencher(false); };
+
+/* Fase 1 x Fase 2 */
+function setFase(f) {
+  fase = f;
+  document.querySelectorAll('#segFase button').forEach(b => b.classList.toggle('on', +b.dataset.f === f));
+  $('win').classList.toggle('f1', f === 1);
+  $('win').style.setProperty('--off', f === 1 ? '0px' : '62px');
+  $('faseHint').innerHTML = f === 2
+    ? '<b>Fase 2:</b> o campo <b>Obs. Cautela</b> fica na própria tela; a cautela acompanha a digitação.'
+    : '<b>Fase 1:</b> a tela continua igual à de hoje. Clique em <b>Ok</b>: a janela "Observação" abre e o texto vai para a cautela.';
+  atualizar();
+  ajustarEscalas();
+}
+document.querySelectorAll('#segFase button').forEach(b => b.onclick = () => setFase(+b.dataset.f));
+
+/* Botões Ok / Sai */
+function abrirInputBox(depois) {
+  $('ibox').classList.add('show'); $('iboxIn').value = obsFase1; setTimeout(() => $('iboxIn').focus(), 30);
+  const fechar = ok => { $('ibox').classList.remove('show'); if (ok) { obsFase1 = $('iboxIn').value; atualizar(); depois && depois(); } };
+  $('iboxOk').onclick = () => fechar(true); $('iboxCancel').onclick = () => fechar(false);
+  $('iboxIn').onkeydown = e => { if (e.key === 'Enter') fechar(true); if (e.key === 'Escape') fechar(false); };
+}
+function imprimir() {
+  const V = valoresDaTela(), pa = $('printArea');
+  pa.innerHTML = '';
+  for (let i = 0; i < 3; i++) { const h = document.createElement('div'); pa.appendChild(h); renderFr3(h, FR3.depois, { mode: 'print', V, fullPage: true }); }
+  setTimeout(() => window.print(), 50);
+}
+$('btnOk').onclick = () => {
+  if (fase === 1) abrirInputBox(() => document.getElementById('cautLive').scrollIntoView({ behavior: 'smooth', block: 'center' }));
+  else document.getElementById('cautLive').scrollIntoView({ behavior: 'smooth', block: 'center' });
+};
+$('btnSai').onclick = () => { $('btnLimpar').click(); };
+$('btnPrint').onclick = () => { if (fase === 1) abrirInputBox(imprimir); else imprimir(); };
+
+/* ---------- Seções estáticas ---------- */
+const VEX = (() => { const keep = { obs: EXEMPLO.obs }; return {
+  doc_saida: '1162230', chegada: '10/11/2026 08:00', retirada_cliente: '10/11/2026 09:54:00', xtempo: '(1 horas 54 min)',
+  NOME_EMPUR: LINHAS[0].empurrador, trecho: TRECHO, nome: LINHAS[0].transportador, carreta: LINHAS[0].carreta, frota: LINHAS[0].frota, cavalo: '', chassis: '',
+  dtipolacre: 'Ferro', lacre: '97726', pedagio: '2415281', cautela_sefaz: '3090033267', cavalo_retirando: 'AHN-2D86', dtipocavalo: 'Volvo', transbordo: '977-29',
+  motorista: LINHAS[0].condutor, cnhrg: '12345670', usuario: OPERADOR, cont_veic: '2915861', barras: '19' + EMPRESA + '00' + '1162230', ObsExtra: keep.obs, ATODECLA: '' }; })();
+renderFr3($('cautProblema'), FR3.antes, { mode: 'print', V: VEX, hand: true });
+renderFr3($('cautAntes'), FR3.antes, { mode: 'print', V: VEX });
+renderFr3($('cautDepois'), FR3.depois, { mode: 'print', V: VEX, stamp: true });
+
+/* Casos do dia a dia */
+const MODELOS = {
+  bitrem: { carreta: 'BTR-1A11', lacre: '50101', obs: 'SAÍDA POR PARTES – BITREM. 1ª carreta BTR-1A11: LACRES 50101, 50102, 50103, 50104. 2ª carreta BTR-2B22: LACRES 50105, 50106, 50107.' },
+  prancha: { carreta: 'PRC-7E31', lacre: '', obs: 'CARRETA PRANCHA COM CONTAINER TCLU 765432-1 (container não informado na origem – Belém).' },
+  avaria:  { obs: 'Veículo liberado com avaria no para-choque traseiro, conforme vistoria da balança. Motorista ciente e de acordo.' }
+};
+const caso = (doc, m, extra) => Object.assign({}, VEX, { doc_saida: doc, barras: '19' + EMPRESA + '00' + doc, carreta: m.carreta, lacre: m.lacre, ObsExtra: m.obs }, extra || {});
+renderFr3($('caso1'), FR3.depois, { mode: 'print', V: caso('1162240', MODELOS.bitrem, { frota: 'BTR-1A11' }), stamp: true });
+renderFr3($('caso2'), FR3.depois, { mode: 'print', V: caso('1162241', MODELOS.bitrem, { carreta: 'BTR-2B22', lacre: '50105', frota: 'BTR-1A11' }), stamp: true });
+renderFr3($('caso3'), FR3.depois, { mode: 'print', V: caso('1162242', MODELOS.prancha, { chassis: '', dtipolacre: 'S/lacre', frota: 'PRC-7E31' }), stamp: true });
+
+/* Modelos na demo */
+document.querySelectorAll('.chip[data-m]').forEach(c => c.onclick = () => {
+  const m = MODELOS[c.dataset.m];
+  if (m.lacre !== undefined) { $('f_lacre').value = m.lacre; }
+  if (c.dataset.m === 'prancha') $('f_tipolacre').value = 'S/lacre';
+  if (fase === 2) { $('f_obs').value = m.obs; $('f_obs').dataset.ok = m.obs; } else { obsFase1 = m.obs; }
+  atualizar();
+});
+
+/* Editor */
+let edVer = 'depois';
+function renderEditor() { renderFr3($('edSheet'), FR3[edVer], { mode: 'design', markChanges: edVer === 'depois' }); }
+document.querySelectorAll('#segEd button').forEach(b => b.onclick = () => {
+  edVer = b.dataset.v; document.querySelectorAll('#segEd button').forEach(x => x.classList.toggle('on', x === b)); renderEditor(); renderCode();
+});
+document.querySelectorAll('#edTabs button[data-t]').forEach(b => b.onclick = () => {
+  document.querySelectorAll('#edTabs button').forEach(x => x.classList.toggle('on', x === b));
+  const code = b.dataset.t === 'code';
+  $('edPage').style.display = code ? 'none' : 'block'; $('edCode').style.display = code ? 'block' : 'none';
+  ajustarEscalas();
+});
+
+const SCRIPT = `var xtempo,barras,dtipocavalo,dtipolacre : string;
+    trecho : String;
++    ObsExtra : String;
+procedure MasterData1OnBeforePrint(Sender: TfrxComponent);
+begin
+  barras:='19'+<empresa>+'00'+<tabela1_0."doc_saida">;
+  xtempo:=<tabela1_0."tempo">;
+  xtempo:=copy(xtempo,pos('diárias',xtempo)+8,50);
+
+  if <tabela1_0."tipo_cavalo">=0 then
+    dtipocavalo:='Fiat'
+  else if <tabela1_0."tipo_cavalo">=1 then
+    dtipocavalo:='Ford'
+  else if <tabela1_0."tipo_cavalo">=2 then
+    dtipocavalo:='Mercedes'
+  else if <tabela1_0."tipo_cavalo">=3 then
+    dtipocavalo:='Scania'
+  else if <tabela1_0."tipo_cavalo">=4 then
+    dtipocavalo:='VolksWagen'
+  else if <tabela1_0."tipo_cavalo">=5 then
+    dtipocavalo:='Volvo'
+  else if <tabela1_0."tipo_cavalo">=6 then
+    dtipocavalo:='Iveco';
+
+  if <tabela1_0."tipo_lacre">=0 then
+    dtipolacre:='Arame'
+  else if <tabela1_0."tipo_lacre">=1 then
+    dtipolacre:='Cadeado'
+  else if <tabela1_0."tipo_lacre">=2 then
+    dtipolacre:='Ferro'
+  else if <tabela1_0."tipo_lacre">=3 then
+    dtipolacre:='Plastico'
+  else if <tabela1_0."tipo_lacre">=4 then
+    dtipolacre:='S/lacre';
+
+  if <CodigoEmpresa> = '01' then trecho := 'PVH / MAO';
+  if <CodigoEmpresa> = '02' then trecho := 'BEL / MAO';
+  if <CodigoEmpresa> = '03' then trecho := 'MAO / PVH';
+  if <CodigoEmpresa> = '04' then trecho := 'MAO / BEL';
+  if <CodigoEmpresa> = '05' then trecho := 'MAO / HUW';
+  if <CodigoEmpresa> = '06' then trecho := 'HUW / MAO';
+end;
+
+begin
++  { Fase 1: pede a observação uma vez; sai igual nas 3 vias }
++  ObsExtra := InputBox('Cautela de saída', 'Observação (sai na linha OBS da cautela). Deixe em branco se não houver:', '');
+end.`;
+function realce(src, mostrarNovas) {
+  const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return src.split('\n').filter(l => mostrarNovas || !l.startsWith('+')).map(l => {
+    const add = l.startsWith('+'); let s = esc(add ? l.slice(1) : l);
+    s = s.replace(/('[^']*')/g, '<span class="str">$1</span>')
+         .replace(/(\{[^}]*\})/g, '<span class="cm2">$1</span>')
+         .replace(/\b(var|procedure|begin|end|if|then|else|string|String)\b/g, '<span class="kw">$1</span>');
+    return add ? `<span class="add">${s}</span>` : s;
+  }).join('\n');
+}
+function renderCode() { $('codeBox').innerHTML = realce(SCRIPT, edVer === 'depois'); }
+$('codeF1').innerHTML = realce(SCRIPT.split('\n').slice(0, 4).join('\n') + '\n  ...  (código original sem alteração)  ...\nend;\n\n' + SCRIPT.split('\n').slice(-4).join('\n'), true);
+
+/* Navegação ativa */
+const secs = [...document.querySelectorAll('section')];
+window.addEventListener('scroll', () => {
+  const y = scrollY + 120; let cur = secs[0].id;
+  for (const s of secs) if (s.offsetTop <= y) cur = s.id;
+  document.querySelectorAll('nav a').forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#' + cur));
+});
+
+preencher(true);
+setFase(2);
+renderEditor(); renderCode();
+setTimeout(ajustarEscalas, 50);
+</script>
+</body>
+</html>
